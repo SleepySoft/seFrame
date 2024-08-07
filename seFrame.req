@@ -109,22 +109,58 @@
                                         "id": "",
                                         "uuid": "f63e5f2fd0a04fd581ff7acbad7ede2d",
                                         "title": "Excel",
-                                        "child": [],
-                                        "content": "## 说明\n\n该Excel描述了数据及它的属性，数据基本属性包括：\n\n+ 路径（path）\n> 以类似目录的树形结构对数据进行分门别类\n\n+ 数据名（name）\n> 数据的名字，和路径组合后的字符串为该数据的唯一标识\n\n+ 数据描述（description）\n+ 对数据的说明，仅供人阅读\n\n+ 类型（type）\n> 数据类型，包括：\n> + float：32位浮点数，也可以通过整数+小数点位数的方式表达整形\n> + int32：32位带符号整数\n> + uint32：32位无符号整数\n> + int16：16位带符号整数\n> + uint16：16位无符号整数\n> + char：字符类型，一般用来表达字符串，对应的C语言类型通常为有符号型\n> + byte：字节类型，一般用来表达buffer，对应的C语言类型通常为无符号型\n> + enum16：16位无符号整数，按枚举定义取离散值\n> + enum32：32位无符号整数，按枚举定义取离散值\n> + bitfield16：16位无符号整数，按位域定义取组合值\n> + bitfield32：32位无符号整数，按位域定义取组合值\n\n+ 长度（length）\n> 如果该属性大于1，则该数据为数组，长度为数组长度而非字节数\n\n+ 可取值的集合（range）\n> 包括连续值的区间（interval），以及离散值的集合（Enumeration）\n\n+ 默认值（default）\n> 初始化的值\n\n+ 单位\n> 该数据的单位\n\n+ Blob分组（blob_group）\n> 生成代码时将该数据放入哪个数据块（结构体）中，相近功能的数据放一起便于存储和传输buffer\n\n+ 功能\n> 该数据的功能，包括以下几种：\n> + General：没有特定的功能\n> + Measurement：测量值\n> + Status：状态值\n> + Setting：用以作为设置值，通常配合Setting Manager使用，同时可以根据blob_group标识对设置的存储区域进行分组；命令通常有请求和ACK\n> + Command：用以作为命令，命令通常有ACK\n\n\n\n\n",
+                                        "child": [
+                                            {
+                                                "id": "",
+                                                "uuid": "4aee5767b91d468fa19ed6772747f4b9",
+                                                "title": "Basic Properties",
+                                                "child": [],
+                                                "content": "## 说明\n\n数据基本属性包括：\n\n+ 路径（path）\n> 以类似目录的树形结构对数据进行分门别类\n\n+ 数据名（name）\n> 数据的名字，和路径组合后的字符串为该数据的唯一标识\n\n+ 数据描述（description）\n+ 对数据的说明，仅供人阅读\n\n+ 类型（type）\n> 数据类型，包括：\n> + float：32位浮点数，也可以通过整数+小数点位数的方式表达整形\n> + int32：32位带符号整数\n> + uint32：32位无符号整数\n> + int16：16位带符号整数\n> + uint16：16位无符号整数\n> + char：字符类型，一般用来表达字符串，对应的C语言类型通常为有符号型\n> + byte：字节类型，一般用来表达buffer，对应的C语言类型通常为无符号型\n> + enum16：16位无符号整数，按枚举定义取离散值\n> + enum32：32位无符号整数，按枚举定义取离散值\n> + bitfield16：16位无符号整数，按位域定义取组合值\n> + bitfield32：32位无符号整数，按位域定义取组合值\n\n+ 长度（length）\n> 如果该属性大于1，则该数据为数组，长度为数组长度而非字节数\n\n+ 可取值的集合（range）\n> 包括连续值的区间（interval），以及离散值的集合（Enumeration）\n\n+ 默认值（default）\n> 初始化的值\n\n+ 单位\n> 该数据的单位\n\n+ Blob分组（blob_group）\n> 生成代码时将该数据放入哪个数据块（结构体）中，相近功能的数据放一起便于存储和传输buffer\n\n+ 功能\n> 该数据的功能，包括以下几种：\n> + General：没有特定的功能\n> + Measurement：测量值\n> + Status：状态值\n> + Setting：用以作为设置值，通常配合Setting Manager使用，同时可以根据blob_group标识对设置的存储区域进行分组；命令通常有请求和ACK\n> + Command：用以作为命令，命令通常有ACK\n\n",
+                                                "Owner": "",
+                                                "Version": "",
+                                                "Status": "",
+                                                "Priority": "",
+                                                "Implementation": "",
+                                                "last_editor": "sleep",
+                                                "last_change_time": "2024-08-07 17:09:45"
+                                            },
+                                            {
+                                                "id": "",
+                                                "uuid": "6f26dd0eb4764737bddbb83f3871a081",
+                                                "title": "Additional Properities",
+                                                "child": [],
+                                                "content": "## 说明\n\n用户可以通过插件扩展代码生成工具，将更多属性嵌入到代码中。比如：\n> + 不同角色的访问权限：RO，RW\n> + Modbus映射信息：寄存器地址\n> + 界面展示的信息：显示标签，精度等",
+                                                "Owner": "",
+                                                "Version": "",
+                                                "Status": "",
+                                                "Priority": "",
+                                                "Implementation": "",
+                                                "last_editor": "sleep",
+                                                "last_change_time": "2024-08-07 17:10:18"
+                                            }
+                                        ],
+                                        "content": "## 说明\n\n采用Excel管理数据属性，包括数据基本属性以及附加属性。\n\n+ 基本属性：Dataframe用以管理数据的最小属性集\n\n+ 附加数据：由用户附加的属性\n",
                                         "Owner": "",
                                         "Version": "",
                                         "Status": "",
                                         "Priority": "",
                                         "Implementation": "",
                                         "last_editor": "sleep",
-                                        "last_change_time": "2024-08-07 17:00:55"
+                                        "last_change_time": "2024-08-07 17:10:15"
                                     },
                                     {
                                         "id": "",
                                         "uuid": "dc3536a646284351b066d837bf6f6c41",
-                                        "title": "New Item",
+                                        "title": "Code Generator",
                                         "child": [],
-                                        "content": ""
+                                        "content": "",
+                                        "Owner": "",
+                                        "Version": "",
+                                        "Status": "",
+                                        "Priority": "",
+                                        "Implementation": "",
+                                        "last_editor": "sleep",
+                                        "last_change_time": "2024-08-07 17:10:29"
                                     }
                                 ]
                             },
