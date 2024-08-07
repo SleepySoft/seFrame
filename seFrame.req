@@ -1,0 +1,376 @@
+{
+    "req_meta": {
+        "Owner": [],
+        "Version": [],
+        "Status": [
+            "Draft",
+            "Submitted",
+            "Reviewing",
+            "Reserved",
+            "Approved",
+            "Deferred",
+            "Rejected"
+        ],
+        "Priority": [
+            "Must / Vital",
+            "Should / Necessary",
+            "Could / Nice to Have",
+            "To Be Defined"
+        ],
+        "Implementation": [
+            "Not Implemented",
+            "Planing",
+            "Designing",
+            "Implementing",
+            "Verifying",
+            "Full Implemented",
+            "Partial Implemented"
+        ],
+        "meta_group": [
+            "WHY",
+            "WHAT",
+            "HOW"
+        ]
+    },
+    "req_data": {
+        "id": "",
+        "uuid": "ce188a5bd68d4c87b53aaf880c373e11",
+        "title": "RightClickToRenameRequirement",
+        "child": [
+            {
+                "id": "",
+                "uuid": "11c1266e145249858bc47eb007808fe1",
+                "title": "Business Needs (WHY)",
+                "content": "",
+                "child": [
+                    {
+                        "id": "",
+                        "uuid": "d4e5c33fdb1044c1b28ab7f3b9da9093",
+                        "title": "Proposal",
+                        "child": [],
+                        "content": "这是一个开源的嵌入式程序框架，适用于工业设备领域，特别是适用于具有以下特点的场景：\n\n+ 设备及子设备存在大量的采集/状态数据\n\n+ 设备间依靠特定的通信方式进行数据同步\n\n该框架将数据的同步做成可方便扩展的机制，因此各个设备之间无需在通信和协议上花费精力，而是将精力集中在产品逻辑上。\n\n\n该项目还包含了以下额外的特性：\n\n+ 功能模块化，模块间通过数据框架进行交互，没有耦合\n\n+ 消息队列和异步处理机制\n\n+ 设置的校验和存储\n\n+ 事件日志及告警\n\n\n\n\n\n",
+                        "Owner": "",
+                        "Version": "",
+                        "Status": "",
+                        "Priority": "",
+                        "Implementation": "",
+                        "last_editor": "sleep",
+                        "last_change_time": "2024-08-07 12:29:20"
+                    },
+                    {
+                        "id": "",
+                        "uuid": "6e5cb926a2ad416e8519fa9ac47d1e49",
+                        "title": "Basic Requirement",
+                        "child": [],
+                        "content": "+ 无任何使用限制\n\n+ 通过AI编写大部分代码，以避免版权问题\n\n+ 纯C实现，0动态分配内存\n\n+ 核心部分系统无关，可以配合任何RTOS或在高级系统上运行\n\n",
+                        "Owner": "",
+                        "Version": "",
+                        "Status": "",
+                        "Priority": "",
+                        "Implementation": "",
+                        "last_editor": "sleep",
+                        "last_change_time": "2024-08-07 11:51:51"
+                    }
+                ]
+            },
+            {
+                "id": "",
+                "uuid": "d482e027840e4fcc860d8cc26e44e83c",
+                "title": "Stakeholder Requirements (WHAT)",
+                "content": "",
+                "child": [
+                    {
+                        "id": "",
+                        "uuid": "21b72cb04de846869f450c802aa2dbdc",
+                        "title": "Components",
+                        "child": [
+                            {
+                                "id": "",
+                                "uuid": "88f186c4b3f84035b560b8137de20fda",
+                                "title": "Dataframe",
+                                "child": [],
+                                "content": "",
+                                "Owner": "",
+                                "Version": "",
+                                "Status": "",
+                                "Priority": "",
+                                "Implementation": "",
+                                "last_editor": "sleep",
+                                "last_change_time": "2024-08-07 12:12:35"
+                            },
+                            {
+                                "id": "",
+                                "uuid": "68205e1deb754c87a0d571c9c445b1cc",
+                                "title": "Module Manager",
+                                "child": [],
+                                "content": "",
+                                "Owner": "",
+                                "Version": "",
+                                "Status": "",
+                                "Priority": "",
+                                "Implementation": "",
+                                "last_editor": "sleep",
+                                "last_change_time": "2024-08-07 12:13:42"
+                            },
+                            {
+                                "id": "",
+                                "uuid": "a0f0f07719f143ba8012c2b964352075",
+                                "title": "Message Queue",
+                                "child": [],
+                                "content": "",
+                                "Owner": "",
+                                "Version": "",
+                                "Status": "",
+                                "Priority": "",
+                                "Implementation": "",
+                                "last_editor": "sleep",
+                                "last_change_time": "2024-08-07 12:12:47"
+                            },
+                            {
+                                "id": "",
+                                "uuid": "eec89fd7c4404bf1adfc2309afbc9d69",
+                                "title": "Data Subscriber",
+                                "child": [],
+                                "content": "",
+                                "Owner": "",
+                                "Version": "",
+                                "Status": "",
+                                "Priority": "",
+                                "Implementation": "",
+                                "last_editor": "sleep",
+                                "last_change_time": "2024-08-07 12:14:43"
+                            }
+                        ],
+                        "content": "## 说明\n\n组件是为seFrame的运作提供基本机制的模块，核心的组件包括：\n\n+ Dataframe\n\n+ Module Manager\n\n+ Message Queue\n\n从设计上来说，核心组件不能被裁剪\n",
+                        "Owner": "",
+                        "Version": "",
+                        "Status": "",
+                        "Priority": "",
+                        "Implementation": "",
+                        "last_editor": "sleep",
+                        "last_change_time": "2024-08-07 12:17:35"
+                    },
+                    {
+                        "id": "",
+                        "uuid": "02e37295136d4eba80ae734f62f86c0a",
+                        "title": "Middleware",
+                        "child": [
+                            {
+                                "id": "",
+                                "uuid": "aa9b4576541f4a1185b320ee77129523",
+                                "title": "Setting",
+                                "child": [],
+                                "content": "",
+                                "Owner": "",
+                                "Version": "",
+                                "Status": "",
+                                "Priority": "",
+                                "Implementation": "",
+                                "last_editor": "sleep",
+                                "last_change_time": "2024-08-07 11:55:53"
+                            },
+                            {
+                                "id": "",
+                                "uuid": "28cfe0774578403fa7a438eaed9044b3",
+                                "title": "Event Alarm",
+                                "child": [],
+                                "content": "",
+                                "Owner": "",
+                                "Version": "",
+                                "Status": "",
+                                "Priority": "",
+                                "Implementation": "",
+                                "last_editor": "sleep",
+                                "last_change_time": "2024-08-07 11:56:01"
+                            },
+                            {
+                                "id": "",
+                                "uuid": "34aff71ab53945a49c1a3c259fccfb12",
+                                "title": "Debug Support",
+                                "child": [],
+                                "content": "",
+                                "Owner": "",
+                                "Version": "",
+                                "Status": "",
+                                "Priority": "",
+                                "Implementation": "",
+                                "last_editor": "sleep",
+                                "last_change_time": "2024-08-07 11:56:26"
+                            },
+                            {
+                                "id": "",
+                                "uuid": "2c4079ecb7c645e5b7ccbc120b7ac3c8",
+                                "title": "Fault Handling",
+                                "child": [],
+                                "content": "",
+                                "Owner": "",
+                                "Version": "",
+                                "Status": "",
+                                "Priority": "",
+                                "Implementation": "",
+                                "last_editor": "sleep",
+                                "last_change_time": "2024-08-07 11:56:35"
+                            },
+                            {
+                                "id": "",
+                                "uuid": "53869717433b49bfb598ef8268351a9c",
+                                "title": "Comminucation",
+                                "child": [
+                                    {
+                                        "id": "",
+                                        "uuid": "93bd8e96361c406e829d9641a9cf9c61",
+                                        "title": "Modbus",
+                                        "child": [],
+                                        "content": "",
+                                        "Owner": "",
+                                        "Version": "",
+                                        "Status": "",
+                                        "Priority": "",
+                                        "Implementation": "",
+                                        "last_editor": "sleep",
+                                        "last_change_time": "2024-08-07 12:11:02"
+                                    },
+                                    {
+                                        "id": "",
+                                        "uuid": "9585e3989e614638978349a7d5c85c1f",
+                                        "title": "CAN",
+                                        "child": [],
+                                        "content": "",
+                                        "Owner": "",
+                                        "Version": "",
+                                        "Status": "",
+                                        "Priority": "",
+                                        "Implementation": "",
+                                        "last_editor": "sleep",
+                                        "last_change_time": "2024-08-07 12:11:07"
+                                    },
+                                    {
+                                        "id": "",
+                                        "uuid": "28b2ec724ee04f0ebcf27dfe3aac4114",
+                                        "title": "MQTT",
+                                        "child": [],
+                                        "content": "",
+                                        "Owner": "",
+                                        "Version": "",
+                                        "Status": "",
+                                        "Priority": "",
+                                        "Implementation": "",
+                                        "last_editor": "sleep",
+                                        "last_change_time": "2024-08-07 12:11:21"
+                                    }
+                                ],
+                                "content": "",
+                                "Owner": "",
+                                "Version": "",
+                                "Status": "",
+                                "Priority": "",
+                                "Implementation": "",
+                                "last_editor": "sleep",
+                                "last_change_time": "2024-08-07 12:10:54"
+                            },
+                            {
+                                "id": "",
+                                "uuid": "4cb9c4060c0d4607b3835d73fda14d08",
+                                "title": "DataFrame",
+                                "child": [],
+                                "content": "## 说明\n\nseFrame提供一套机制\n",
+                                "Owner": "",
+                                "Version": "",
+                                "Status": "",
+                                "Priority": "",
+                                "Implementation": "",
+                                "last_editor": "sleep",
+                                "last_change_time": "2024-08-07 12:10:46"
+                            }
+                        ],
+                        "content": "",
+                        "Owner": "",
+                        "Version": "",
+                        "Status": "",
+                        "Priority": "",
+                        "Implementation": "",
+                        "last_editor": "sleep",
+                        "last_change_time": "2024-08-07 12:15:25"
+                    },
+                    {
+                        "id": "",
+                        "uuid": "1bafd57b2eff4f01b943d5e25b43802b",
+                        "title": "Software Upgrade",
+                        "child": [],
+                        "content": "",
+                        "Owner": "",
+                        "Version": "",
+                        "Status": "",
+                        "Priority": "",
+                        "Implementation": "",
+                        "last_editor": "sleep",
+                        "last_change_time": "2024-08-07 11:55:02"
+                    },
+                    {
+                        "id": "",
+                        "uuid": "c69847e1e1d14d7bb137a411c7283ce1",
+                        "title": "Test Frame",
+                        "child": [],
+                        "content": "",
+                        "Owner": "",
+                        "Version": "",
+                        "Status": "",
+                        "Priority": "",
+                        "Implementation": "",
+                        "last_editor": "sleep",
+                        "last_change_time": "2024-08-07 11:56:46"
+                    },
+                    {
+                        "id": "",
+                        "uuid": "74782d6f0ab0474ea9c5ebe195e6fd04",
+                        "title": "Cyber Security",
+                        "child": [],
+                        "content": "",
+                        "Owner": "",
+                        "Version": "",
+                        "Status": "",
+                        "Priority": "",
+                        "Implementation": "",
+                        "last_editor": "sleep",
+                        "last_change_time": "2024-08-07 11:52:31"
+                    },
+                    {
+                        "id": "",
+                        "uuid": "d278370983884ae6ac95e85cd8798325",
+                        "title": "Industry",
+                        "child": [],
+                        "content": "",
+                        "Owner": "",
+                        "Version": "",
+                        "Status": "",
+                        "Priority": "",
+                        "Implementation": "",
+                        "last_editor": "sleep",
+                        "last_change_time": "2024-08-07 11:52:45"
+                    },
+                    {
+                        "id": "",
+                        "uuid": "8b30773479134de6919ec36a17e7f50b",
+                        "title": "Tools",
+                        "child": [],
+                        "content": "",
+                        "Owner": "",
+                        "Version": "",
+                        "Status": "",
+                        "Priority": "",
+                        "Implementation": "",
+                        "last_editor": "sleep",
+                        "last_change_time": "2024-08-07 11:59:04"
+                    }
+                ]
+            },
+            {
+                "id": "",
+                "uuid": "26be32db0cbe46709520b80b3bd38659",
+                "title": "System Requirements (HOW)",
+                "content": "",
+                "child": []
+            }
+        ]
+    }
+}
