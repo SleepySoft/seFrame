@@ -1,0 +1,158 @@
+你做为一个专业的嵌入式C程序员，下面根据我提出的需求编写C代码。
+回答需要使用中文，而代码注释需要使用英文，且需要符合doxygen的格式。
+编码规范，包括括号使用、换行和缩进参考以下代码：
+'''
+uint32_t fooBar(uint32_t val)
+{
+	if ((val >= 0) && (val < 10)) 
+	{
+	    // Do something
+	}
+	
+    switch(val)
+	{
+	    case 1:
+		    {
+		        // Do something
+		    }
+		    break;
+		default:
+		    {
+		        // Do something
+		    }
+			break;
+	}
+}
+'''
+理解了就说“好的”。
+
+
+
+
+帮我把以下的描述转为常量定义，每个项以DT_为前缀。注意是常量定义不是类型定义，每个常量是DF_TYPE_TYPE类型：
+
+> + BYTE：字节类型，一般用来表达buffer，对应的C语言类型通常为无符号型
+> + CHAR：字符类型，一般用来表达字符串，对应的C语言类型通常为有符号型
+> + INT16：16位带符号整数
+> + UINT16：16位无符号整数
+> + INT32：32位带符号整数
+> + UINT32：32位无符号整数
+> + ENUM16：16位无符号整数，按枚举定义取离散值
+> + ENUM32：32位无符号整数，按枚举定义取离散值
+> + BF16：16位无符号整数，按位域定义取组合值
+> + BF32：32位无符号整数，按位域定义取组合值
+> + FLOAT32：32位浮点数，也可以通过整数+小数点位数的方式表达整形
+
+
+
+
+
+帮我把以下的描述转为常量定义，每个项以DF_为前缀，每个常量是DF_FEATURE_TYPE类型。注释写在定义后面：
+
+> + General：没有特定的功能
+> + Measurement：测量值
+> + Status：状态值
+> + Setting：用以作为设置值，通常配合Setting Manager使用，同时可以根据blob_group标识对设置的存储区域进行分组；命令通常有请求和ACK
+> + Command：用以作为命令，命令通常有ACK
+
+
+
+
+
+
+根据这些定义，写一系列函数：
+
+makeProperty，将它们组合为一个uint32_t的属性值
+getType, getFeature，getReserved，将属性值分别从property的不同位段中提取出来。
+
+
+typedef uint16_t DF_TYPE_TYPE;
+#define DF_TYPE_MASK 0x0000FFFF
+#define DF_TYPE_SHIFT 0
+
+typedef uint8_t DF_FEATURE_TYPE;
+#define DF_FEATURE_MASK 0x00FF0000
+#define DF_FEATURE_SHIFT 16
+
+typedef uint8_t DF_RESERVE_TYPE;
+#define DF_RESERVE_MASK 0xFF000000
+#define DF_RESERVE_SHIFT 24
+
+
+
+
+
+写一个函数：uint32_t typeSize(DF_TYPE type)，返回对应类型的大小，类型大小请你根据其描述推测。
+
+
+
+
+
+我使用以下结构体在C语言中存储泛型：
+```
+typedef struct
+{
+    uint32_t properties;
+    uint16_t length;
+    uint16_t group;
+    void* value;
+} DataPoint;
+```
+
+通过以下这三个函数可以从properties中取出该数据的各种属性：
+```
+DF_TYPE_TYPE getType(uint32_t property);
+DF_FEATURE_TYPE getFeature(uint32_t property);
+DF_RESERVE_TYPE getReserved(uint32_t property);
+```
+
+相关属性值如下：
+```
+/**
+ * @brief Data type constants
+ */
+#define DT_BYTE     ((DF_TYPE_TYPE)1)   /**< BYTE: Unsigned 8-bit integer, typically used for buffers */
+#define DT_CHAR     ((DF_TYPE_TYPE)2)   /**< CHAR: Signed 8-bit integer, typically used for strings */
+#define DT_INT16    ((DF_TYPE_TYPE)3)   /**< INT16: Signed 16-bit integer */
+#define DT_UINT16   ((DF_TYPE_TYPE)4)   /**< UINT16: Unsigned 16-bit integer */
+#define DT_INT32    ((DF_TYPE_TYPE)5)   /**< INT32: Signed 32-bit integer */
+#define DT_UINT32   ((DF_TYPE_TYPE)6)   /**< UINT32: Unsigned 32-bit integer */
+#define DT_ENUM16   ((DF_TYPE_TYPE)7)   /**< ENUM16: Unsigned 16-bit integer, used for enumerations */
+#define DT_ENUM32   ((DF_TYPE_TYPE)8)   /**< ENUM32: Unsigned 32-bit integer, used for enumerations */
+#define DT_BF16     ((DF_TYPE_TYPE)9)   /**< BF16: Unsigned 16-bit integer, used for bit fields */
+#define DT_BF32     ((DF_TYPE_TYPE)10)  /**< BF32: Unsigned 32-bit integer, used for bit fields */
+#define DT_FLOAT32  ((DF_TYPE_TYPE)11)  /**< FLOAT32: 32-bit floating point number */
+
+
+#define DF_GENERAL      ((DF_FEATURE_TYPE)0)    /**< General: No specific function */
+#define DF_MEASUREMENT  ((DF_FEATURE_TYPE)1)    /**< Measurement: Measurement value */
+#define DF_STATUS       ((DF_FEATURE_TYPE)2)    /**< Measurement: Status: Status value */
+#define DF_SETTING      ((DF_FEATURE_TYPE)3)    /**< Setting: Used as setting value, usually used with Setting Manager */
+#define DF_COMMAND      ((DF_FEATURE_TYPE)4)    /**< Command: Used as command, commands usually have ACK */
+```
+
+
+使用
+```uint32_t typeSize(DF_TYPE_TYPE type);```
+函数可以得到对应类型的大小。
+
+DataPoint中length为数据数组长度，value为指向数据内存的指针，大小为typeSize * length。
+
+
+根据以上信息请帮我实现一系列接口，用以存取各种所支持的数据类型，示例如下：
+
+```
+typedef uint32_t DF_INDEX;
+bool getAsBytes(DF_INDEX index, uint8_t* data)
+```
+
+其中index为下面数组的索引，而DF_DATA_COUNT为数组的长度。
+
+
+```
+extern const uint32_t DF_DATA_COUNT;
+extern DataPoint DataFrameData[];
+```
+
+注意只需要输出get和set一系列函数，并且需要支持上面列出的所有数据类型。公共部分放入一个公共函数中，减少重复代码。
+
