@@ -30,19 +30,19 @@ typedef uint8_t DF_RESERVE_T;
 /**
  * @brief Data type constants
  */
-#define DF_TYPE_BYTE        ((DF_TYPE_T)0)  /**< BYTE: Unsigned 8-bit integer, typically used for buffers */
-#define DF_TYPE_CHAR        ((DF_TYPE_T)1)  /**< CHAR: Signed 8-bit integer, typically used for strings */
-#define DF_TYPE_INT16       ((DF_TYPE_T)2)  /**< INT16: Signed 16-bit integer */
-#define DF_TYPE_UINT16      ((DF_TYPE_T)3)  /**< UINT16: Unsigned 16-bit integer */
-#define DF_TYPE_INT32       ((DF_TYPE_T)4)  /**< INT32: Signed 32-bit integer */
-#define DF_TYPE_UINT32      ((DF_TYPE_T)5)  /**< UINT32: Unsigned 32-bit integer */
-#define DF_TYPE_FLOAT32     ((DF_TYPE_T)6)  /**< FLOAT32: 32-bit floating point number */
-#define DF_TYPE_FLOAT64     ((DF_TYPE_T)10) /**< FLOAT32: 64-bit floating point number */
+#define DF_TYPE_BYTE            ((DF_TYPE_T)0)  /**< BYTE: Unsigned 8-bit integer, typically used for buffers */
+#define DF_TYPE_CHAR            ((DF_TYPE_T)1)  /**< CHAR: Signed 8-bit integer, typically used for strings */
+#define DF_TYPE_INT16           ((DF_TYPE_T)2)  /**< INT16: Signed 16-bit integer */
+#define DF_TYPE_UINT16          ((DF_TYPE_T)3)  /**< UINT16: Unsigned 16-bit integer */
+#define DF_TYPE_INT32           ((DF_TYPE_T)4)  /**< INT32: Signed 32-bit integer */
+#define DF_TYPE_UINT32          ((DF_TYPE_T)5)  /**< UINT32: Unsigned 32-bit integer */
+#define DF_TYPE_FLOAT32         ((DF_TYPE_T)6)  /**< FLOAT32: 32-bit floating point number */
+#define DF_TYPE_FLOAT64         ((DF_TYPE_T)10) /**< FLOAT32: 64-bit floating point number */
 
 
-#define DF_STYLE_COMMON     ((DF_STYLE_T)0)
-#define DF_STYLE_ENUM       ((DF_STYLE_T)1)
-#define DF_STYLE_BITFIELD   ((DF_STYLE_T)2)
+#define DF_STYLE_COMMON         ((DF_STYLE_T)0)
+#define DF_STYLE_ENUM           ((DF_STYLE_T)1)
+#define DF_STYLE_BITFIELD       ((DF_STYLE_T)2)
 
 
 #define DF_FEATURE_GENERAL      ((DF_FEATURE_T)0)    /**< General: No specific function */

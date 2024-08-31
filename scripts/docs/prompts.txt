@@ -1,0 +1,28 @@
+你作为一个专业的python程序员，基于python3.8编写程序。你将会用到pyqt5、pandas、openyxl完成下面我所描述的功能。理解了就说“好的”。
+
+
+
+根据以下定义，帮我补全这个dict：
+
+#define DF_TYPE_BYTE            ((DF_TYPE_T)0)  /**< BYTE: Unsigned 8-bit integer, typically used for buffers */
+#define DF_TYPE_CHAR            ((DF_TYPE_T)1)  /**< CHAR: Signed 8-bit integer, typically used for strings */
+#define DF_TYPE_INT16           ((DF_TYPE_T)2)  /**< INT16: Signed 16-bit integer */
+#define DF_TYPE_UINT16          ((DF_TYPE_T)3)  /**< UINT16: Unsigned 16-bit integer */
+#define DF_TYPE_INT32           ((DF_TYPE_T)4)  /**< INT32: Signed 32-bit integer */
+#define DF_TYPE_UINT32          ((DF_TYPE_T)5)  /**< UINT32: Unsigned 32-bit integer */
+#define DF_TYPE_FLOAT32         ((DF_TYPE_T)6)  /**< FLOAT32: 32-bit floating point number */
+#define DF_TYPE_FLOAT64         ((DF_TYPE_T)10) /**< FLOAT32: 64-bit floating point number */
+
+TYPE_MAPPING = {
+    'DF_TYPE_BYTE': 'uint8_t',
+}
+
+
+
+写一个类：DataFrameParser，用来分析指定excel文件的第2个sheet，并按一定的规则对其进行转化。
+
+
+
+
+
+
