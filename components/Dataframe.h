@@ -30,13 +30,14 @@ typedef uint8_t DF_RESERVE_T;
 /**
  * @brief Data type constants
  */
-#define DF_TYPE_BYTE        ((DF_TYPE_T)1)   /**< BYTE: Unsigned 8-bit integer, typically used for buffers */
-#define DF_TYPE_CHAR        ((DF_TYPE_T)2)   /**< CHAR: Signed 8-bit integer, typically used for strings */
-#define DF_TYPE_INT16       ((DF_TYPE_T)3)   /**< INT16: Signed 16-bit integer */
-#define DF_TYPE_UINT16      ((DF_TYPE_T)4)   /**< UINT16: Unsigned 16-bit integer */
-#define DF_TYPE_INT32       ((DF_TYPE_T)5)   /**< INT32: Signed 32-bit integer */
-#define DF_TYPE_UINT32      ((DF_TYPE_T)6)   /**< UINT32: Unsigned 32-bit integer */
-#define DF_TYPE_FLOAT32     ((DF_TYPE_T)11)  /**< FLOAT32: 32-bit floating point number */
+#define DF_TYPE_BYTE        ((DF_TYPE_T)0)  /**< BYTE: Unsigned 8-bit integer, typically used for buffers */
+#define DF_TYPE_CHAR        ((DF_TYPE_T)1)  /**< CHAR: Signed 8-bit integer, typically used for strings */
+#define DF_TYPE_INT16       ((DF_TYPE_T)2)  /**< INT16: Signed 16-bit integer */
+#define DF_TYPE_UINT16      ((DF_TYPE_T)3)  /**< UINT16: Unsigned 16-bit integer */
+#define DF_TYPE_INT32       ((DF_TYPE_T)4)  /**< INT32: Signed 32-bit integer */
+#define DF_TYPE_UINT32      ((DF_TYPE_T)5)  /**< UINT32: Unsigned 32-bit integer */
+#define DF_TYPE_FLOAT32     ((DF_TYPE_T)6)  /**< FLOAT32: 32-bit floating point number */
+#define DF_TYPE_FLOAT64     ((DF_TYPE_T)10) /**< FLOAT32: 64-bit floating point number */
 
 
 #define DF_STYLE_COMMON     ((DF_STYLE_T)0)
@@ -77,7 +78,7 @@ uint32_t typeSize(DF_TYPE_T type);
  * @param reserved The reserved value
  * @return uint32_t The combined property value
  */
-uint32_t makeProperty(DF_TYPE_T type, DF_FEATURE_T feature, DF_RESERVE_T reserved);
+uint32_t makeProperty(DF_TYPE_T type, DF_STYLE_T style, DF_FEATURE_T feature, DF_RESERVE_T reserved);
 
 
 /**
@@ -91,10 +92,10 @@ uint32_t makeProperty(DF_TYPE_T type, DF_FEATURE_T feature, DF_RESERVE_T reserve
 DF_TYPE_T getType(uint32_t property);
 
 /**
- * @brief Extracts the type value from the property
+ * @brief Extracts the style value from the property
  *
  * @param property The combined property value
- * @return DF_STYLE_T The extracted type value
+ * @return DF_STYLE_T The extracted style value
  */
 DF_STYLE_T getStyle(uint32_t property);
 

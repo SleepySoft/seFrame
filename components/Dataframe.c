@@ -43,27 +43,25 @@ DF_RESERVE_T getReserved(uint32_t property)
 uint32_t typeSize(DF_TYPE_T type)
 {
     switch (type) {
-    case DT_BYTE:
+    case DF_TYPE_BYTE:
         // A byte is typically 1 byte in size.
-        return 1;
-    case DT_CHAR:
+    case DF_TYPE_CHAR:
         // A character is typically 1 byte in size.
         return 1;
-    case DT_INT16:
-    case DT_UINT16:
-    case DT_ENUM16:
-    case DT_BF16:
+    case DF_TYPE_INT16:
+    case DF_TYPE_UINT16:
         // A 16-bit integer or bit field is typically 2 bytes in size.
         return 2;
-    case DT_INT32:
-    case DT_UINT32:
-    case DT_ENUM32:
-    case DT_BF32:
+    case DF_TYPE_INT32:
+    case DF_TYPE_UINT32:
         // A 32-bit integer or bit field is typically 4 bytes in size.
         return 4;
-    case DT_FLOAT32:
+    case DF_TYPE_FLOAT32:
         // A 32-bit floating point number is typically 4 bytes in size.
         return 4;
+    case DF_TYPE_FLOAT64:
+        // A 32-bit floating point number is typically 4 bytes in size.
+        return 8;
     default:
         // If the type is unknown, return 0.
         return 0;
@@ -83,24 +81,36 @@ static uint32_t dataPointSize(const DataPoint* dp)
 }
 
 
-static bool copyDataRaw(DF_INDEX_T index, void *data, uint32_t size, bool toDataPoint)
+static bool copyDataRaw(DataPoint* dp, void *data, uint32_t length, bool toDataPoint)
 {
     bool result = false;
-    if (data != NULL)
+    if ((dp != NULL) && (data != NULL))
     {
-        DataPoint* dp = getDataPoint(index);
-        if (dp != NULL)
-        {
-            uint32_t copySize = MIN(size, dataPointSize(dp));
-            toDataPoint ? memcpy(dp->data, data, copySize) : memcpy(data, dp->data, copySize);
-            result = true;
-        }
+        uint32_t copySize = MIN(length, dataPointSize(dp));
+        toDataPoint ? memcpy(dp->data, data, copySize) : memcpy(data, dp->data, copySize);
+        result = true;
     }
     return result;
 }
 
 
+bool copyDataCheckingType(DF_INDEX_T index, DF_TYPE_T expectType, void* data, uint32_t length, bool toDataPoint)
+{
+    DataPoint* dp = getDataPoint(index);
+    return ((dp != NULL) && (getType(dp->properties)) == expectType) ? 
+        copyDataRaw(dp, data, length, toDataPoint) : false;
+}
 
+
+bool getAsBytes(DF_INDEX_T index, uint8_t* data, uint32_t length)
+{
+    return copyDataCheckingType(index, DF_TYPE_BYTE, data, length, false);
+}
+
+bool setAsBytes(DF_INDEX_T index, const uint8_t* data, uint32_t length)
+{
+    return copyDataCheckingType(index, DF_TYPE_BYTE, data, length, true);
+}
 
 
 
