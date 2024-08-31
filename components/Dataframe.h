@@ -117,7 +117,171 @@ DF_FEATURE_T getFeature(uint32_t property);
 DF_RESERVE_T getReserved(uint32_t property);
 
 
+/**
+ * @brief Copies data from a DataPoint to an array of bytes.
+ *
+ * This function is used to retrieve data from a DataPoint where the data type
+ * is expected to be DF_TYPE_BYTE. It copies the data into the provided byte array.
+ *
+ * @param index The index of the DataPoint from which to retrieve data.
+ * @param data The pointer to the array where the data will be copied.
+ * @param length The number of bytes to copy.
+ * @return bool True if the data was successfully copied, false otherwise.
+ */
+bool getAsBytes(DF_INDEX_T index, uint8_t* data, uint32_t length);
 
+/**
+ * @brief Copies data from an array of bytes to a DataPoint.
+ *
+ * This function is used to set data into a DataPoint where the data type
+ * is expected to be DF_TYPE_BYTE. It copies the data from the provided byte array.
+ *
+ * @param index The index of the DataPoint where the data will be set.
+ * @param data The pointer to the array with the data to set.
+ * @param length The number of bytes to copy.
+ * @return bool True if the data was successfully copied, false otherwise.
+ */
+bool setAsBytes(DF_INDEX_T index, const uint8_t* data, uint32_t length);
+
+/**
+ * @brief Copies data from a DataPoint to an array of char if the type matches.
+ *
+ * @param index The index of the DataPoint.
+ * @param data The pointer to the array where data will be copied.
+ * @param length The number of elements to copy.
+ * @return bool True if the operation was successful, false otherwise.
+ */
+bool getAsChar(DF_INDEX_T index, int8_t* data, uint32_t length);
+
+/**
+ * @brief Copies data from an array of char to a DataPoint if the type matches.
+ *
+ * @param index The index of the DataPoint.
+ * @param data The pointer to the array with data to set.
+ * @param length The number of elements to copy.
+ * @return bool True if the operation was successful, false otherwise.
+ */
+bool setAsChar(DF_INDEX_T index, const int8_t* data, uint32_t length);
+
+/**
+ * @brief Copies data from a DataPoint to an array of int16_t if the type matches.
+ *
+ * @param index The index of the DataPoint.
+ * @param data The pointer to the array where data will be copied.
+ * @param length The number of elements to copy.
+ * @return bool True if the operation was successful, false otherwise.
+ */
+bool getAsInt16(DF_INDEX_T index, int16_t* data, uint32_t length);
+
+/**
+ * @brief Copies data from an array of int16_t to a DataPoint if the type matches.
+ *
+ * @param index The index of the DataPoint.
+ * @param data The pointer to the array with data to set.
+ * @param length The number of elements to copy.
+ * @return bool True if the operation was successful, false otherwise.
+ */
+bool setAsInt16(DF_INDEX_T index, const int16_t* data, uint32_t length);
+
+/**
+ * @brief Copies data from a DataPoint to an array of uint16_t if the type matches.
+ *
+ * @param index The index of the DataPoint.
+ * @param data The pointer to the array where data will be copied.
+ * @param length The number of elements to copy.
+ * @return bool True if the operation was successful, false otherwise.
+ */
+bool getAsUint16(DF_INDEX_T index, uint16_t* data, uint32_t length);
+
+/**
+ * @brief Copies data from an array of uint16_t to a DataPoint if the type matches.
+ *
+ * @param index The index of the DataPoint.
+ * @param data The pointer to the array with data to set.
+ * @param length The number of elements to copy.
+ * @return bool True if the operation was successful, false otherwise.
+ */
+bool setAsUint16(DF_INDEX_T index, const uint16_t* data, uint32_t length);
+
+/**
+ * @brief Copies data from a DataPoint to an array of int32_t if the type matches.
+ *
+ * @param index The index of the DataPoint.
+ * @param data The pointer to the array where data will be copied.
+ * @param length The number of elements to copy.
+ * @return bool True if the operation was successful, false otherwise.
+ */
+bool getAsInt32(DF_INDEX_T index, int32_t* data, uint32_t length);
+
+/**
+ * @brief Copies data from an array of int32_t to a DataPoint if the type matches.
+ *
+ * @param index The index of the DataPoint.
+ * @param data The pointer to the array with data to set.
+ * @param length The number of elements to copy.
+ * @return bool True if the operation was successful, false otherwise.
+ */
+bool setAsInt32(DF_INDEX_T index, const int32_t* data, uint32_t length);
+
+/**
+ * @brief Copies data from a DataPoint to an array of uint32_t if the type matches.
+ *
+ * @param index The index of the DataPoint.
+ * @param data The pointer to the array where data will be copied.
+ * @param length The number of elements to copy.
+ * @return bool True if the operation was successful, false otherwise.
+ */
+bool getAsUint32(DF_INDEX_T index, uint32_t* data, uint32_t length);
+
+/**
+ * @brief Copies data from an array of uint32_t to a DataPoint if the type matches.
+ *
+ * @param index The index of the DataPoint.
+ * @param data The pointer to the array with data to set.
+ * @param length The number of elements to copy.
+ * @return bool True if the operation was successful, false otherwise.
+ */
+bool setAsUint32(DF_INDEX_T index, const uint32_t* data, uint32_t length);
+
+/**
+ * @brief Copies data from a DataPoint to an array of float if the type matches.
+ *
+ * @param index The index of the DataPoint.
+ * @param data The pointer to the array where data will be copied.
+ * @param length The number of elements to copy.
+ * @return bool True if the operation was successful, false otherwise.
+ */
+bool getAsFloat32(DF_INDEX_T index, float* data, uint32_t length);
+
+/**
+ * @brief Copies data from an array of float to a DataPoint if the type matches.
+ *
+ * @param index The index of the DataPoint.
+ * @param data The pointer to the array with data to set.
+ * @param length The number of elements to copy.
+ * @return bool True if the operation was successful, false otherwise.
+ */
+bool setAsFloat32(DF_INDEX_T index, const float* data, uint32_t length);
+
+/**
+ * @brief Copies data from a DataPoint to an array of double if the type matches.
+ *
+ * @param index The index of the DataPoint.
+ * @param data The pointer to the array where data will be copied.
+ * @param length The number of elements to copy.
+ * @return bool True if the operation was successful, false otherwise.
+ */
+bool getAsFloat64(DF_INDEX_T index, double* data, uint32_t length);
+
+/**
+ * @brief Copies data from an array of double to a DataPoint if the type matches.
+ *
+ * @param index The index of the DataPoint.
+ * @param data The pointer to the array with data to set.
+ * @param length The number of elements to copy.
+ * @return bool True if the operation was successful, false otherwise.
+ */
+bool setAsFloat64(DF_INDEX_T index, const double* data, uint32_t length);
 
 
 #endif // __DATA_FRAME_SLEEPY_H__
