@@ -1,4 +1,5 @@
 import os
+import openpyxl
 import traceback
 import pandas as pd
 
@@ -24,13 +25,47 @@ FEATURE_LIST = ['GENERAL', 'MEASUREMENT', 'STATUS', 'SETTING', 'COMMAND']
 
 class DataFrameParser:
     def __init__(self):
+        self.enum_table = {}
+        self.bit_field_table = {}
         self.dataframe = pd.DataFrame()
+
+    def parse_excel(self, excel_file: str):
+        workbook = openpyxl.load_workbook(excel_file)
+        self.parse_enum(workbook)
+        self.parse_bit_field(workbook)
+
+    def parse_enum(self, workbook):
+        self.enum_table = DataFrameParser.parse_value_declare(workbook, 2)
+
+    def parse_bit_field(self, workbook):
+        self.bit_field_table = DataFrameParser.parse_value_declare(workbook, 3)
+
+    def parse_data_frame(self):
+        pass
+
+    @staticmethod
+    def parse_value_declare(workbook, page):
+        value_declare = {}
+        current_value_group = None
+        sheet = workbook.worksheets[page]
+        for row in sheet.iter_rows(min_row=2, values_only=True):
+            if row[0]:
+                if row[0] not in value_declare:
+                    value_declare[row[0]] = {}
+                current_value_group = value_declare[row[0]]
+                continue
+            if current_value_group is not None and row[1] and row[2]:
+                current_value_group[row[1]] = (row[2], row[3])
+        return value_declare
 
 
 # ---------------------------------------------------------------------------------------------------------------------
 
 def main():
-    pass
+    parser = DataFrameParser()
+    parser.parse_excel('./../Dataframe.xlsx')
+    print(parser.enum_table)
+    print(parser.bit_field_table)
 
 
 # ----------------------------------------------------------------------------------------------------------------------
