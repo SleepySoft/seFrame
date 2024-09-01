@@ -1,4 +1,4 @@
-你作为一个专业的python程序员，基于python3.8编写程序。你将会用到pyqt5、pandas、openyxl完成下面我所描述的功能。理解了就说“好的”。
+你作为一个专业的python程序员，基于python3.8编写程序。你将会用到pyqt5、pandas、openyxl完成下面我所描述的功能，每个功能需要使用英文进行python标准格式的注释。理解了就说“好的”。
 
 
 
@@ -31,5 +31,26 @@ TYPE_MAPPING = {
 实现一个成员函数parse_bit_field，分析excel第4页。其第一行是表头，从第二行开始，第1列是位域名，第2列是位域对应的位编号，第3列是该位的名称，第4列是该项对应文本。分析方法及数据组织方法基本和上面的枚举相同。
 保存到self.bit_field_table中。
 
-实现一个成员函数parse_data_frame，这个函数比较复杂，将在后面一步步实现。
+
+
+
+把以下excel表头转换为字符串常量定义：
+Path	Name	Description	Type	Length	Style	Range	Default	Unit	Blob	Feature
+
+
+
+
+
+实现一个成员函数parse_data_frame(self, workbook)，载入excel第二页到dataframe中，然后依次调用以下函数：
+
+pre_process(df)：将
+
+
+
+
+
+
+
+
+
 
