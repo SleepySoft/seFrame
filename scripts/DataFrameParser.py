@@ -1,21 +1,30 @@
+import itertools
 import os
 import re
+import string
+import hashlib
+from typing import List
+
+import numpy as np
 import openpyxl
 import traceback
 import pandas as pd
 
 
-COL_PATH = "Path"
-COL_NAME = "Name"
-COL_DESCRIPTION = "Description"
-COL_TYPE = "Type"
-COL_LENGTH = "Length"
-COL_STYLE = "Style"
-COL_RANGE = "Range"
-COL_DEFAULT = "Default"
-COL_UNIT = "Unit"
-COL_BLOB = "Blob"
-COL_FEATURE = "Feature"
+COLUMN_PATH = "Path"
+COLUMN_NAME = "Name"
+COLUMN_DESCRIPTION = "Description"
+COLUMN_TYPE = "Type"
+COLUMN_LENGTH = "Length"
+COLUMN_STYLE = "Style"
+COLUMN_RANGE = "Range"
+COLUMN_DEFAULT = "Default"
+COLUMN_UNIT = "Unit"
+COLUMN_BLOB = "Blob"
+COLUMN_FEATURE = "Feature"
+
+STANDARD_COLUMNS = [COLUMN_PATH, COLUMN_NAME, COLUMN_DESCRIPTION, COLUMN_TYPE, COLUMN_LENGTH,
+                    COLUMN_STYLE, COLUMN_RANGE, COLUMN_DEFAULT, COLUMN_UNIT, COLUMN_BLOB, COLUMN_FEATURE]
 
 
 TYPE_ENUM_PREFIX = 'DF_TYPE_'
@@ -37,6 +46,214 @@ FEATURE_ENUM_PREFIX = 'F_FEATURE_'
 FEATURE_LIST = ['GENERAL', 'MEASUREMENT', 'STATUS', 'SETTING', 'COMMAND']
 
 
+def str_to_int(s, err=np.NaN):
+    try:
+        if s is None:
+            return err
+        elif isinstance(s, str):
+            return int(s[2:], 16) if s.lower().startswith("0x") else int(s, 10)
+        else:
+            return int(s)
+    except Exception as e:
+        print(f'Error parse {s} to int')
+        return err
+
+
+def str_to_float(s, err=np.NaN):
+    try:
+        i = str_to_int(s, None)
+        return float(i) if i is not None else (float(s) if s is not None else err)
+    except Exception as e:
+        print(f'Error parse {s} to float')
+        return err
+
+
+def format_bit_meanings(value, value_range) -> str:
+    result = []
+    for bit in value_range:
+        if value & (1 << bit):
+            result.append(f"bit{bit} - {value_range[bit]}")
+    return '\n'.join(result)
+
+
+def float_eq(x, y, epsilon=1e-7):
+    return abs(x - y) < epsilon
+
+
+def float_neq(x, y, epsilon=1e-7):
+    return not float_eq(x, y, epsilon)
+
+
+def str_available(val: str) -> bool:
+    return isinstance(val, str) and len(val) > 0
+
+
+def index_to_excel_column_name(index: int) -> str:
+    index = int(index)
+    column_index = ''
+    while index > 0:
+        remainder = (index - 1) % 26 + 1
+        column_index += string.ascii_uppercase[remainder - 1]
+        index -= remainder
+        index //= 26
+    return column_index[::-1]
+
+
+def str_hash_32_bit(text: str) -> int:
+    return int.from_bytes(hashlib.sha256(text.encode('utf-8')).digest()[:4], 'little')
+
+
+def str_hash_32_bit_formatted(text: str) -> str:
+    return '%08X' % str_hash_32_bit(text)
+
+
+def select_rows_by_column_value(df: pd.DataFrame, col: str, col_val: any):
+    """
+    Get rows from a DataFrame by column value filter
+    """
+    try:
+        return df.loc[df[col] == col_val]
+    except Exception as e:
+        print(e)
+        print(traceback.format_exc())
+        return None
+    finally:
+        pass
+
+
+def get_cel_value_by_column_value(df: pd.DataFrame, col: str, col_val: any, cell_column: str):
+    """
+    Find row by column filter and get the cell value
+    """
+    try:
+        return df.loc[df[col] == col_val, cell_column].values[0]
+    except Exception as e:
+        print(e)
+        print(traceback.format_exc())
+        return None
+    finally:
+        pass
+
+
+def duplicate_rows(df, rows_to_copy, columns_to_keep, copies: int):
+    """
+    Duplicate specified rows in a DataFrame and insert them below the original rows.
+
+    Parameters:
+    df (pd.DataFrame): The original DataFrame.
+    rows_to_copy (list): A list of row indices to duplicate.
+    columns_to_keep (list): A list of column names to keep in the duplicated rows.
+    N (int): Number of times to duplicate the rows.
+
+    Returns:
+    pd.DataFrame: A new DataFrame with the duplicated rows inserted.
+    """
+    # 获取要复制的行，并完整复制
+    rows = df.loc[rows_to_copy].copy()
+
+    # 清空不需要保留的列
+    for col in df.columns:
+        if col not in columns_to_keep:
+            rows[col] = None
+
+    # 复制指定的行N份
+    copied_rows = pd.concat([rows] * copies, ignore_index=True)
+
+    # 将复制的行插入到原始DataFrame中的指定位置
+    part_before = df.iloc[:rows_to_copy[-1] + 1]
+    part_after = df.iloc[rows_to_copy[-1] + 1:]
+    new_df = pd.concat([part_before, copied_rows, part_after], ignore_index=True)
+    return new_df
+
+
+class LevelingPathParser:
+    INDEXES_FINDER = re.compile(r'\[(.*?)\]')
+
+    def __init__(self, duplicate_columns=None):
+        if duplicate_columns is None:
+            duplicate_columns = STANDARD_COLUMNS
+        self.duplicate_columns = duplicate_columns
+
+    def extend_rows(self, df: pd.DataFrame) -> pd.DataFrame:
+        if df.empty:
+            return df
+
+        df['expand_path'] = ''
+
+        prev_path = ''
+        same_path_rows = []
+        df = df.reset_index()
+
+        columns = df.columns.tolist()
+        extend_df = pd.DataFrame(columns=columns)
+
+        # TODO: Append expanded rows to extend_df
+
+        for index, row in df.iterrows():
+            data_path = row[COLUMN_PATH]
+
+            if str_available(prev_path):
+                # There's a leveling path in previous line
+                if data_path == prev_path:
+                    # The next row has the same path
+                    same_path_rows.append((index, row))
+                    continue
+                else:
+                    # The data belongs to another path
+                    # Process the recorded rows that in the same path
+                    self.expand_data_frame_rows(df, prev_path, same_path_rows)
+                    prev_path = ''
+                    same_path_rows.clear()
+
+            indexes = LevelingPathParser.parse_path_indexes(data_path)
+            if len(indexes) > 0:
+                # Means it's an array path
+                prev_path = data_path
+                same_path_rows = [(index, row)]
+
+        if str_available(prev_path):
+            self.expand_data_frame_rows(df, prev_path, same_path_rows)
+            pass
+
+        return df
+
+    def expand_data_frame_rows(self, df: pd.DataFrame, data_path: str, same_path_rows: list):
+        expanded_path = LevelingPathParser.expand_array_path(data_path)
+        duplicate_row_indexes = [index for index, _ in same_path_rows]
+        group_size = len(expanded_path)
+        expanded_df = duplicate_rows(df, duplicate_row_indexes, self.duplicate_columns, group_size - 1)
+
+        for i, (original_index, _) in enumerate(same_path_rows):
+            start_idx = i * group_size
+            end_idx = (i + 1) * group_size
+            for j in range(start_idx, end_idx):
+                expanded_df.at[j, 'expand_path'] = expanded_path[j - start_idx]
+
+        return expanded_df
+
+    @staticmethod
+    def expand_array_path(data_path: str) -> [tuple]:
+        indexes = LevelingPathParser.parse_path_indexes(data_path)
+        path_index_iteration = list(itertools.product(*[range(0, i) for i in indexes]))
+
+        expanded_path = []
+        for path_index in path_index_iteration:
+            sub_path_formatter = LevelingPathParser.INDEXES_FINDER.sub('%s', data_path)
+            sub_path = sub_path_formatter % tuple([i for i in path_index])
+            expanded_path.append(sub_path)
+        return expanded_path
+
+    @staticmethod
+    def parse_path_indexes(data_path: str) -> List[int]:
+        """
+        Extract all digit in [].
+        :param data_path: The path string that may have [] or not.
+        :return: The digit list of []s
+        """
+        indexes = LevelingPathParser.INDEXES_FINDER.findall(data_path)
+        return [int(i) for i in indexes]
+
+
 class DataFrameParser:
     def __init__(self):
         self.enum_table = {}
@@ -47,6 +264,7 @@ class DataFrameParser:
         workbook = openpyxl.load_workbook(excel_file)
         self.parse_enum(workbook)
         self.parse_bit_field(workbook)
+        self.parse_data_frame(workbook)
 
     def parse_enum(self, workbook):
         self.enum_table = DataFrameParser.parse_value_declare(workbook, 2)
@@ -61,93 +279,42 @@ class DataFrameParser:
         df = pd.DataFrame(data, columns=columns)
 
         df = DataFrameParser.pre_process(df)
-        df = DataFrameParser.extend_rows(df)
+        df = LevelingPathParser().extend_rows(df)
         return df
 
     @staticmethod
     def pre_process(df: pd.DataFrame):
         warnings = []
-        if COL_NAME in df.columns:
-            df = df[df[COL_NAME].notna()]
-            warnings.append(f'Warning: Deleted rows with empty {COL_NAME}.')
+        if COLUMN_NAME in df.columns:
+            df = df[df[COLUMN_NAME].notna()]
+            warnings.append(f'Warning: Deleted rows with empty {COLUMN_NAME}.')
 
-        if COL_LENGTH in df.columns:
-            df[COL_LENGTH] = pd.to_numeric(df[COL_LENGTH], errors='coerce')
-            df = df[df[COL_LENGTH].notna()]
-            warnings.append(f'Warning: Deleted rows with invalid {COL_LENGTH}.')
+        if COLUMN_LENGTH in df.columns:
+            df[COLUMN_LENGTH] = pd.to_numeric(df[COLUMN_LENGTH], errors='coerce')
+            df = df[df[COLUMN_LENGTH].notna()]
+            warnings.append(f'Warning: Deleted rows with invalid {COLUMN_LENGTH}.')
 
-        if COL_TYPE in df.columns:
-            invalid_types = df[~df[COL_TYPE].isin(TYPE_MAPPING.keys())]
-            df = df[df[COL_TYPE].isin(TYPE_MAPPING.keys())]
+        if COLUMN_TYPE in df.columns:
+            invalid_types = df[~df[COLUMN_TYPE].isin(TYPE_MAPPING.keys())]
+            df = df[df[COLUMN_TYPE].isin(TYPE_MAPPING.keys())]
             for index in invalid_types.index:
-                warnings.append(f'Warning: Deleted row with invalid COL_TYPE at index {index}.')
+                warnings.append(f'Warning: Deleted row with invalid COLUMN_TYPE at index {index}.')
 
-        if COL_STYLE in df.columns:
-            invalid_styles = df[~df[COL_STYLE].isin(STYLE_LIST)]
-            df = df[df[COL_STYLE].isin(STYLE_LIST)]
+        if COLUMN_STYLE in df.columns:
+            invalid_styles = df[~df[COLUMN_STYLE].isin(STYLE_LIST)]
+            df = df[df[COLUMN_STYLE].isin(STYLE_LIST)]
             for index in invalid_styles.index:
-                warnings.append(f'Warning: Deleted row with invalid COL_STYLE at index {index}.')
+                warnings.append(f'Warning: Deleted row with invalid COLUMN_STYLE at index {index}.')
 
-        if COL_FEATURE in df.columns:
-            invalid_features = df[~df[COL_FEATURE].isin(FEATURE_LIST)]
-            df = df[df[COL_FEATURE].isin(FEATURE_LIST)]
+        if COLUMN_FEATURE in df.columns:
+            invalid_features = df[~df[COLUMN_FEATURE].isin(FEATURE_LIST)]
+            df = df[df[COLUMN_FEATURE].isin(FEATURE_LIST)]
             for index in invalid_features.index:
-                warnings.append(f'Warning: Deleted row with invalid COL_FEATURE at index {index}.')
+                warnings.append(f'Warning: Deleted row with invalid COLUMN_FEATURE at index {index}.')
 
         for warning in warnings:
             print(warning)
         return df
-
-    @staticmethod
-    def extend_rows(df: pd.DataFrame):
-        # 找到所有包含子设备组的行
-        pattern = re.compile(r'(.+?)\[(\d+)\](\d*)')
-        subdevice_groups = []
-        for index, row in df.iterrows():
-            path = row['COL_PATH']
-            matches = pattern.finditer(path)
-            for match in matches:
-                base_path = match.group(1)
-                count = int(match.group(2))
-                subdevice_number = match.group(3)
-                subdevice_groups.append((base_path, count, subdevice_number, index))
-
-        # 展开所有子设备组
-        new_rows = []
-        for _, row in df.iterrows():
-            path = row[COL_PATH]
-            matches = pattern.finditer(path)
-            for match in matches:
-                base_path = match.group(1)
-                count = int(match.group(2))
-                subdevice_number = match.group(3)
-                for i in range(count):
-                    new_row = row.copy()
-                    new_row[COL_PATH] = f"{base_path}{subdevice_number}{i}"
-                    new_rows.append(new_row)
-            else:  # 如果没有子设备组，则直接添加当前行
-                new_rows.append(row)
-
-        # 处理连续的子设备组
-        last_base_path = None
-        last_subdevice_number = None
-        for i in range(len(new_rows)):
-            row = new_rows[i]
-            path = row['COL_PATH']
-            matches = pattern.match(path)
-            if matches:
-                base_path, count, subdevice_number = matches.groups()
-                if base_path == last_base_path:
-                    new_rows[i][COL_PATH] = \
-                        f"{base_path}{last_subdevice_number}{int(subdevice_number) + i - matches.start(0)}"
-                else:
-                    last_base_path = base_path
-                    last_subdevice_number = subdevice_number
-            else:
-                last_base_path = None
-                last_subdevice_number = None
-
-        return pd.DataFrame(new_rows)
 
     @staticmethod
     def parse_value_declare(workbook, page):

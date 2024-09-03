@@ -50,7 +50,32 @@ pre_process(df)：将
 
 
 
+定义一个函数 duplicate_rows，它接受四个参数：原始的 DataFrame，要复制的行索引列表 rows_to_copy，要保留的列名列表 columns_to_keep，以及复制的次数 N。
+在函数内部，首先完整地复制指定行的所有数据。
+然后，对于复制的行，保留 columns_to_keep 中指定的列，并清空其他列。
+将这些复制的行重复 N 次，形成一个新的 DataFrame。
+确定插入点，即要复制的行的下一行位置。
+使用 pd.concat 将原始 DataFrame 分为两部分：插入点之前的所有行和插入点之后的所有行。
+将复制的行 DataFrame 插入到这两部分之间。
+返回合并后的新 DataFrame。
 
 
+
+
+
+
+
+
+完成这个函数：
+
+```
+    def expand_data_frame_rows(df: pd.DataFrame, data_path: str, same_path_rows: list):
+        expanded_path = LevelingPathParser.expand_array_path(data_path)
+        duplicate_row_indexes = [index for index, _ in same_path_rows]
+        expanded_df = duplicate_rows(df, duplicate_row_indexes, [], len(expanded_path))
+```
+
+其中same_path_rows为[(index, row)]，调用duplicate_rows()后，same_path_rows包含的行被复制len(expanded_path)份，每份称为一组，并插入到原始的row后面。
+我需要为每组的'expand_path'列赋值，每组依次赋值为expanded_path的一项。
 
 
