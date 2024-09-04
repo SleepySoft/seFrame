@@ -135,7 +135,7 @@ def get_cel_value_by_column_value(df: pd.DataFrame, col: str, col_val: any, cell
         pass
 
 
-def duplicate_rows(df, rows_to_copy, columns_to_keep, copies: int):
+def duplicate_rows(df, rows_to_copy, columns_to_keep, copies: int, insert_back: bool) -> pd.DataFrame:
     """
     Duplicate specified rows in a DataFrame and insert them below the original rows.
 
@@ -143,7 +143,8 @@ def duplicate_rows(df, rows_to_copy, columns_to_keep, copies: int):
     df (pd.DataFrame): The original DataFrame.
     rows_to_copy (list): A list of row indices to duplicate.
     columns_to_keep (list): A list of column names to keep in the duplicated rows.
-    N (int): Number of times to duplicate the rows.
+    copies (int): Number of times to duplicate the rows.
+    insert_back (bool): True if insert back duplicated rows behind rows_to_copy else just return duplicated rows.
 
     Returns:
     pd.DataFrame: A new DataFrame with the duplicated rows inserted.
@@ -160,10 +161,13 @@ def duplicate_rows(df, rows_to_copy, columns_to_keep, copies: int):
     copied_rows = pd.concat([rows] * copies, ignore_index=True)
 
     # 将复制的行插入到原始DataFrame中的指定位置
-    part_before = df.iloc[:rows_to_copy[-1] + 1]
-    part_after = df.iloc[rows_to_copy[-1] + 1:]
-    new_df = pd.concat([part_before, copied_rows, part_after], ignore_index=True)
-    return new_df
+    if insert_back:
+        part_before = df.iloc[:rows_to_copy[-1] + 1]
+        part_after = df.iloc[rows_to_copy[-1] + 1:]
+        new_df = pd.concat([part_before, copied_rows, part_after], ignore_index=True)
+        return new_df
+    else:
+        return copied_rows
 
 
 class LevelingPathParser:
@@ -201,7 +205,8 @@ class LevelingPathParser:
                 else:
                     # The data belongs to another path
                     # Process the recorded rows that in the same path
-                    self.expand_data_frame_rows(df, prev_path, same_path_rows)
+                    rows = self.expand_data_frame_rows(df, prev_path, same_path_rows)
+                    extend_df = pd.concat([extend_df, rows], ignore_index=True)
                     prev_path = ''
                     same_path_rows.clear()
 
@@ -212,24 +217,33 @@ class LevelingPathParser:
                 same_path_rows = [(index, row)]
 
         if str_available(prev_path):
-            self.expand_data_frame_rows(df, prev_path, same_path_rows)
-            pass
+            rows = self.expand_data_frame_rows(df, prev_path, same_path_rows)
+            extend_df = pd.concat([extend_df, rows], ignore_index=True)
+        extend_df = extend_df.reset_index()
 
-        return df
+        def clean_and_join_paths(expand_path, column_name):
+            clean_expand_path = expand_path.rstrip('/')
+            clean_column_name = column_name.strip('/')
+            full_path = f"{clean_expand_path}/{clean_column_name}"
+            return full_path
+        extend_df['full_path'] = extend_df.apply(
+            lambda _row: clean_and_join_paths(_row['expand_path'], _row[COLUMN_NAME]), axis=1)
+
+        return extend_df
 
     def expand_data_frame_rows(self, df: pd.DataFrame, data_path: str, same_path_rows: list):
-        expanded_path = LevelingPathParser.expand_array_path(data_path)
+        expanded_paths = LevelingPathParser.expand_array_path(data_path)
         duplicate_row_indexes = [index for index, _ in same_path_rows]
-        group_size = len(expanded_path)
-        expanded_df = duplicate_rows(df, duplicate_row_indexes, self.duplicate_columns, group_size - 1)
+        group_size = len(same_path_rows)
+        duplicate_count = len(expanded_paths)
+        expanded_rows = duplicate_rows(df, duplicate_row_indexes, self.duplicate_columns, duplicate_count, False)
 
-        for i, (original_index, _) in enumerate(same_path_rows):
+        for i, expanded_path in enumerate(expanded_paths):
             start_idx = i * group_size
             end_idx = (i + 1) * group_size
             for j in range(start_idx, end_idx):
-                expanded_df.at[j, 'expand_path'] = expanded_path[j - start_idx]
-
-        return expanded_df
+                expanded_rows.at[j, 'expand_path'] = expanded_path
+        return expanded_rows
 
     @staticmethod
     def expand_array_path(data_path: str) -> [tuple]:
