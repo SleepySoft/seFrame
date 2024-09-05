@@ -1,14 +1,12 @@
-import itertools
-import os
 import re
 import string
 import hashlib
-from typing import List
-
-import numpy as np
+import itertools
 import openpyxl
 import traceback
+import numpy as np
 import pandas as pd
+from typing import List
 
 
 COLUMN_PATH = "Path"
@@ -186,7 +184,7 @@ class LevelingPathParser:
 
         prev_path = ''
         same_path_rows = []
-        df = df.reset_index()
+        df = df.reset_index(drop=True)
 
         columns = df.columns.tolist()
         extend_df = pd.DataFrame(columns=columns)
@@ -219,7 +217,7 @@ class LevelingPathParser:
         if str_available(prev_path):
             rows = self.expand_data_frame_rows(df, prev_path, same_path_rows)
             extend_df = pd.concat([extend_df, rows], ignore_index=True)
-        extend_df = extend_df.reset_index()
+        extend_df = extend_df.reset_index(drop=True)
 
         def clean_and_join_paths(expand_path, column_name):
             clean_expand_path = expand_path.rstrip('/')
@@ -294,7 +292,10 @@ class DataFrameParser:
 
         df = DataFrameParser.pre_process(df)
         df = LevelingPathParser().extend_rows(df)
-        return df
+
+        self.dataframe = df
+
+        return self.dataframe
 
     @staticmethod
     def pre_process(df: pd.DataFrame):
