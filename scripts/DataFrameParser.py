@@ -6,7 +6,7 @@ import openpyxl
 import traceback
 import numpy as np
 import pandas as pd
-from typing import List
+from typing import Any, List
 
 
 COLUMN_PATH = "Path"
@@ -44,7 +44,15 @@ FEATURE_ENUM_PREFIX = 'F_FEATURE_'
 FEATURE_LIST = ['GENERAL', 'MEASUREMENT', 'STATUS', 'SETTING', 'COMMAND']
 
 
-def str_to_int(s, err=np.NaN):
+TEMPLATE_ENUM_DECLARE = """
+typedef enum 
+{
+    <<enum_items>>
+} <<enum_name>>
+"""
+
+
+def str_to_int(s, err: Any = np.NaN):
     try:
         if s is None:
             return err
@@ -64,6 +72,14 @@ def str_to_float(s, err=np.NaN):
     except Exception as e:
         print(f'Error parse {s} to float')
         return err
+
+
+def str_or_empty(value: Any):
+    if value is None:
+        return ''
+    if isinstance(value, str):
+        return 'value'
+    return str(value)
 
 
 def format_bit_meanings(value, value_range) -> str:
@@ -278,6 +294,8 @@ class DataFrameParser:
         self.parse_bit_field(workbook)
         self.parse_data_frame(workbook)
 
+        print(self.generate_enum_declaration())
+
     def parse_enum(self, workbook):
         self.enum_table = DataFrameParser.parse_value_declare(workbook, 2)
 
@@ -342,9 +360,37 @@ class DataFrameParser:
                     value_declare[row[0]] = {}
                 current_value_group = value_declare[row[0]]
                 continue
-            if current_value_group is not None and row[1] and row[2]:
-                current_value_group[row[1]] = (row[2], row[3])
+            value = str_to_int(row[1], None)
+            if current_value_group is not None and value is not None and row[2]:
+                current_value_group[value] = (row[2], str_or_empty(row[3]))
         return value_declare
+
+    def generate_enum_declaration(self) -> str:
+        generated_code = TEMPLATE_ENUM_DECLARE
+
+        for enum_name, enum_values in self.enum_table.items():
+            # 初始化一个列表来存储枚举项和它们的注释
+            enum_items_with_comments = []
+
+            # 找到最长的注释，以便对齐
+            max_comment_length = 0
+            for enum_value, (enum_item, enum_item_text) in enum_values.items():
+                # 将枚举项和注释添加到列表中
+                comment_padding = ' ' * (40 - len(enum_item_text))  # 假设我们想要注释宽度为40字符
+                enum_items_with_comments.append(
+                    f"    {enum_item} = {enum_value}, /* {enum_item_text}{comment_padding} */")
+
+            # 将枚举项和注释合并为一个字符串
+            enum_items_str = '\n'.join(enum_items_with_comments)
+
+            # 替换模板中的占位符
+            generated_code = generated_code.replace('<<enum_items>>', enum_items_str)
+            generated_code = generated_code.replace('<<enum_name>>', enum_name)
+
+            # 将生成的代码添加到最终结果中，每个枚举类型之间用换行符分隔
+            generated_code += '\n\n'
+
+        return generated_code.strip()  # 移除最后的换行符
 
 
 # ---------------------------------------------------------------------------------------------------------------------

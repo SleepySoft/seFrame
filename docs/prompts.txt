@@ -156,3 +156,46 @@ extern DataPoint DataFrameData[];
 
 注意只需要输出get和set一系列函数，并且需要支持上面列出的所有数据类型。公共部分放入一个公共函数中，减少重复代码。
 
+
+
+
+
+帮我完成这个函数：
+
+TEMPLATE_ENUM_DECLARE = """
+typedef enum
+{
+    <<enum_items>>
+} <<enum_name>>
+"""
+
+def generate_enum_declaration(self) -> str:
+    generated_code = ""
+    for k, v in self.enum_table:
+        pass
+    return generated_code
+
+其中self.enum_table的格式如下所示：
+
+{
+    enum_name1: { enum_value1: (enum_item1, enum_item1_text), enum_value2: (enum_item2, enum_item2_text), ...... },
+    enum_name2: { enum_value2: (enum_item1, enum_item1_text), enum_value2: (enum_item2, enum_item2_text), ...... },
+    ......
+}
+
+其中enum_item_text要做为enum_item的注释，并且输出enum定义时所有注释要对齐。
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
