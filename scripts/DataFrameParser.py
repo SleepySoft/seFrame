@@ -47,8 +47,9 @@ FEATURE_LIST = ['GENERAL', 'MEASUREMENT', 'STATUS', 'SETTING', 'COMMAND']
 TEMPLATE_ENUM_DECLARE = """
 typedef enum 
 {
-    <<enum_items>>
+<<enum_items>>
 } <<enum_name>>
+
 """
 
 
@@ -78,7 +79,7 @@ def str_or_empty(value: Any):
     if value is None:
         return ''
     if isinstance(value, str):
-        return 'value'
+        return value
     return str(value)
 
 
@@ -147,6 +148,14 @@ def get_cel_value_by_column_value(df: pd.DataFrame, col: str, col_val: any, cell
         return None
     finally:
         pass
+
+
+def align_to_n(x, n):
+    remainder = x % n
+    if remainder == 0:
+        return x
+    else:
+        return x + (n - remainder)
 
 
 def duplicate_rows(df, rows_to_copy, columns_to_keep, copies: int, insert_back: bool) -> pd.DataFrame:
@@ -366,31 +375,30 @@ class DataFrameParser:
         return value_declare
 
     def generate_enum_declaration(self) -> str:
-        generated_code = TEMPLATE_ENUM_DECLARE
+        generated_code = ''
 
         for enum_name, enum_values in self.enum_table.items():
-            # 初始化一个列表来存储枚举项和它们的注释
-            enum_items_with_comments = []
+            enum_items = []
+            enum_comments = []
 
-            # 找到最长的注释，以便对齐
-            max_comment_length = 0
+            max_enum_item_length = 0
             for enum_value, (enum_item, enum_item_text) in enum_values.items():
-                # 将枚举项和注释添加到列表中
-                comment_padding = ' ' * (40 - len(enum_item_text))  # 假设我们想要注释宽度为40字符
-                enum_items_with_comments.append(
-                    f"    {enum_item} = {enum_value}, /* {enum_item_text}{comment_padding} */")
+                enum_item_str = f"    {enum_item} = {enum_value},"
+                enum_items.append(enum_item_str)
+                enum_comments.append(enum_item_text)
+                max_enum_item_length = max(max_enum_item_length, len(enum_item_str))
+            if len(enum_items) > 0:
+                enum_items[-1] = enum_items[-1].rstrip(',')
+            comments_indentation = align_to_n(max_enum_item_length + 4, 4)
 
-            # 将枚举项和注释合并为一个字符串
-            enum_items_str = '\n'.join(enum_items_with_comments)
+            enum_item_with_comments = [f"{item}{' ' * (comments_indentation - len(item))}#{comments}"
+                                       for item, comments in zip(enum_items, enum_comments)]
 
-            # 替换模板中的占位符
-            generated_code = generated_code.replace('<<enum_items>>', enum_items_str)
-            generated_code = generated_code.replace('<<enum_name>>', enum_name)
+            generated_code += TEMPLATE_ENUM_DECLARE.\
+                replace('<<enum_items>>', '\n'.join(enum_item_with_comments)).\
+                replace('<<enum_name>>', enum_name)
 
-            # 将生成的代码添加到最终结果中，每个枚举类型之间用换行符分隔
-            generated_code += '\n\n'
-
-        return generated_code.strip()  # 移除最后的换行符
+        return generated_code
 
 
 # ---------------------------------------------------------------------------------------------------------------------
