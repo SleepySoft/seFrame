@@ -53,6 +53,12 @@ typedef enum
 """
 
 
+TEMPLATE_BIT_FIELD_ITEM = """
+#define <<bit_field_name>>_BITS     <<bits>>
+#define <<bit_field_name>>_MASK     (((uint32_t)1) << <<bit_field_name>>_BITS)
+"""
+
+
 def str_to_int(s, err: Any = np.NaN):
     try:
         if s is None:
@@ -391,7 +397,7 @@ class DataFrameParser:
                 enum_items[-1] = enum_items[-1].rstrip(',')
             comments_indentation = align_to_n(max_enum_item_length + 4, 4)
 
-            enum_item_with_comments = [f"{item}{' ' * (comments_indentation - len(item))}#{comments}"
+            enum_item_with_comments = [f"{item}{' ' * (comments_indentation - len(item))}# {comments}"
                                        for item, comments in zip(enum_items, enum_comments)]
 
             generated_code += TEMPLATE_ENUM_DECLARE.\
@@ -399,6 +405,21 @@ class DataFrameParser:
                 replace('<<enum_name>>', enum_name)
 
         return generated_code
+
+    def generate_bit_field_declaration(self) -> str:
+        generated_code = ''
+
+        for enum_name, enum_values in self.enum_table.items():
+            bf_comments = []
+            bf_bits_items = []
+            bf_mask_items = []
+
+
+
+            max_bf_item_length = 0
+            for bf_value, (bf_item, bf_item_text) in enum_values.items():
+                bf_bits_items.append(f'# define {bf_item}_BITS')
+                bf_mask_items.append(f'# define {bf_item}_MASK')
 
 
 # ---------------------------------------------------------------------------------------------------------------------
