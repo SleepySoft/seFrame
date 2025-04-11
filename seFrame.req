@@ -47,28 +47,28 @@
                         "id": "",
                         "uuid": "d4e5c33fdb1044c1b28ab7f3b9da9093",
                         "title": "Proposal",
-                        "content": "这是一个开源的嵌入式程序框架，适用于工业设备领域，特别是适用于具有以下特点的场景：\n\n+ 设备及子设备存在大量的采集/状态数据\n\n+ 设备间依靠特定的通信方式进行数据同步\n\n该框架将数据的同步做成可方便扩展的机制，因此各个设备之间无需在通信和协议上花费精力，而是将精力集中在产品逻辑上。\n\n\n该项目还包含了以下额外的特性：\n\n+ 功能模块化，模块间通过数据框架进行交互，没有耦合\n\n+ 消息队列和异步处理机制\n\n+ 设置的校验和存储\n\n+ 事件日志及告警\n\n\n\n\n\n",
+                        "content": "这是一个开源的嵌入式程序框架，适用于工业设备领域，特别是适用于具有以下特点的场景：\n\n+ 设备及子设备存在大量的采集/状态数据\n\n+ 设备及子设备间有过程调用（RPC）的需求\n\n该框架将数据的同步做成可方便扩展的机制，因此各个设备之间无需在通信协议上花费精力，而是将精力集中在产品逻辑上。\n\n\n该项目还包含了以下额外的特性：\n\n+ 功能模块化，模块间通过数据框架进行交互，没有耦合\n\n+ 消息队列和异步处理机制\n\n+ 设置的校验和存储\n\n+ 事件日志及告警\n",
                         "Owner": "",
                         "Version": "",
                         "Status": "",
                         "Priority": "",
                         "Implementation": "",
-                        "last_editor": "sleep",
-                        "last_change_time": "2024-08-07 12:29:20",
+                        "last_editor": "yq1061170",
+                        "last_change_time": "2025-04-11 17:19:40",
                         "child": []
                     },
                     {
                         "id": "",
                         "uuid": "6e5cb926a2ad416e8519fa9ac47d1e49",
                         "title": "Basic Requirement",
-                        "content": "+ 无任何使用限制\n\n+ 通过AI编写大部分代码，以避免版权问题\n\n+ 纯C实现，0动态分配内存\n\n+ 核心部分系统无关，可以配合任何RTOS或在高级系统上运行\n\n",
+                        "content": "该项目的代码有以下特点：\n\n+ 无任何使用限制\n\n+ 通过AI编写大部分代码，以避免版权问题\n\n+ 纯C实现，0动态分配内存\n\n+ 核心部分系统无关，可以配合任何RTOS或在高级系统上运行\n",
                         "Owner": "",
                         "Version": "",
                         "Status": "",
                         "Priority": "",
                         "Implementation": "",
-                        "last_editor": "sleep",
-                        "last_change_time": "2024-08-07 11:51:51",
+                        "last_editor": "yq1061170",
+                        "last_change_time": "2025-04-11 17:20:19",
                         "child": []
                     }
                 ]
@@ -79,6 +79,20 @@
                 "title": "Stakeholder Requirements (WHAT)",
                 "content": "",
                 "child": [
+                    {
+                        "id": "",
+                        "uuid": "1cb48374ef274aa8b09a89c21d195b36",
+                        "title": "Concept",
+                        "child": [],
+                        "content": "## 模块四相图\n\n![four-phase-diagram](attachment\\four-phase-diagram.png)\n\n一个模块与外界的交互模式有四种：\n\n| 模式 | 调用者 | 实现者 | 说明 |\n| --- | --- | --- | --- |\n| API | 外部 | 本模块 | 本模块提供给外界的服务，实现该模块所提供的功能 |\n| Dependency | 本模块 | 外部 | 本模块需要依赖的外部服务，即它所依赖的外部对象和API |\n| Callable | 外部 | 本模块 | 本模块正常运行所要求的外界驱动，在本模块的SEPC中需要详细描述其Callable的调用方式，如：周期性、上下文、触发条件等 |\n| Callback | 本模块 | 外部 | 本模块在特定情况下会调用的函数，需要外界实现，比如：要求发送信息，对外通知等 |\n\n在适配该项目的模块时，外界要注意Dependency和Callback的实现及Callable的驱动。\n\n\n## 关于通信\n\n框架不实现具体的通信机制，但会通过Callback请求发送数据。\n\n同理，遇到多级设备的情况，框架也不负责消息的routing，由适配层对消息进行正确分发。\n",
+                        "Owner": "",
+                        "Version": "",
+                        "Status": "",
+                        "Priority": "",
+                        "Implementation": "",
+                        "last_editor": "yq1061170",
+                        "last_change_time": "2025-04-11 18:16:58"
+                    },
                     {
                         "id": "",
                         "uuid": "21b72cb04de846869f450c802aa2dbdc",
